@@ -1,12 +1,16 @@
-# React + Vite
+## Current Implementation
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- Responsive layout using MUI and Vite.
+- Sidebar navigation with Drawer on mobile.
+- Map rendering using Mapbox GL.
+- Environment variables handled via `.env` (`VITE_MAPBOX_TOKEN`).
+- Device-aware zoom level adjustments.
+- Error handling for unsupported browsers.
+- Support for adding markers on the map.
+- Support for adding polygons.
 
-Currently, two official plugins are available:
+## Future Implementation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Allow users to draw directly on the map and display the shapes dynamically.
+- Toggle between adding a marker or drawing a polygon.
+- For polygons: currently, vertices are being updated in state, but the polygon is **not yet displayed** on the map.
