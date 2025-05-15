@@ -28,10 +28,8 @@ interface MapContextType {
   importGeoJSON: (data: any) => void;
 }
 
-// Create the context
 const MapContext = createContext<MapContextType | undefined>(undefined);
 
-// Create a provider component
 export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -51,11 +49,10 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
         setMarkers(markers || []);
         setPolygons(polygons || []);
       }
-      // Mark as initialized AFTER loading data
       setInitialized(true);
     } catch (error) {
       console.error("Error loading from localStorage:", error);
-      setInitialized(true); // Still mark as initialized in case of error
+      setInitialized(true);
     }
   }, []);
 
@@ -232,7 +229,6 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
 };
 
-// Custom hook to use the map context
 export const useMapContext = () => {
   const context = useContext(MapContext);
   if (context === undefined) {

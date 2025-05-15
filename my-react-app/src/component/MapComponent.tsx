@@ -40,17 +40,14 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
     if (map.current) return;
 
     try {
-      // Set the access token
       mapboxgl.accessToken = MAPBOX_TOKEN;
 
-      // Make sure the container is available
       if (!mapContainer.current) {
         setMapError("Map container not found");
         setLoading(false);
         return;
       }
 
-      // Create the map instance with a simpler style
       const mapInstance = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/light-v10",
@@ -60,16 +57,13 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
         preserveDrawingBuffer: true,
       });
 
-      // Handle map load event
       mapInstance.on("load", () => {
         setMapLoaded(true);
         setLoading(false);
       });
 
-      // Handle map error event with more detailed logging
       mapInstance.on("error", (e) => {
         console.error("Mapbox error details:", e);
-        // Try to extract more meaningful error information
         let errorMessage = "Unknown map error";
         if (e.error) {
           errorMessage = e.error.message || JSON.stringify(e.error);
@@ -80,7 +74,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
         setLoading(false);
       });
 
-      // Handle map click event
       mapInstance.on("click", (e) => {
         const lngLat: [number, number] = [e.lngLat.lng, e.lngLat.lat];
 
@@ -93,7 +86,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
 
       map.current = mapInstance;
 
-      // Cleanup function
       return () => {
         if (map.current) {
           map.current.remove();
@@ -159,7 +151,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
         const sourceId = `polygon-source-${index}`;
         const layerId = `polygon-layer-${index}`;
 
-        // Only add sources and layers if the map is fully loaded
         if (map.current!.loaded()) {
           map.current!.addSource(sourceId, {
             type: "geojson",
@@ -184,7 +175,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
             },
           });
 
-          // Add outline
           const outlineLayerId = `${layerId}-outline`;
           map.current!.addLayer({
             id: outlineLayerId,
@@ -203,7 +193,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
     }
   }, [polygons, mapLoaded]);
 
-  // Handle current polygon being drawn
   useEffect(() => {
     if (!map.current || !mapLoaded || currentPolygonPoints.length < 2) return;
 
@@ -211,9 +200,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
       const sourceId = "current-polygon-source";
       const lineLayerId = "current-polygon-line-layer";
 
-      // Only manipulate the map if it's fully loaded
       if (map.current.loaded()) {
-        // Remove existing layers if they exist
         if (map.current.getLayer(lineLayerId)) {
           map.current.removeLayer(lineLayerId);
         }
@@ -222,7 +209,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
           map.current.removeSource(sourceId);
         }
 
-        // Add the current polygon as a line
         map.current.addSource(sourceId, {
           type: "geojson",
           data: {
