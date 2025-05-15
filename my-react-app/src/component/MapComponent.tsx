@@ -12,7 +12,8 @@ import {
 } from "@mui/material";
 
 const MAPBOX_TOKEN =
- 
+
+
 interface MapComponentProps {
   center: [number, number];
   zoom: number;

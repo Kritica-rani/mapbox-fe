@@ -89,7 +89,7 @@ function App() {
           >
             <Box
               sx={{
-                flexGrow: 0.1,
+                flexGrow: 0.2,
                 width: { xs: "100%", md: "300px" },
                 height: { xs: "40%", md: "100%" },
                 overflow: "auto",
