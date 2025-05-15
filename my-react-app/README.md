@@ -8,9 +8,10 @@
 - Error handling for unsupported browsers.
 - Support for adding markers on the map.
 - Support for adding polygons.
+- Used React Context (`MapContext`) for centralized state management across components.
+- Toggle between adding a marker or drawing a polygon.
 
 ## Future Implementation
 
 - Allow users to draw directly on the map and display the shapes dynamically.
-- Toggle between adding a marker or drawing a polygon.
 - For polygons: currently, vertices are being updated in state, but the polygon is **not yet displayed** on the map.
