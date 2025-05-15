@@ -11,8 +11,7 @@ import {
   Button,
 } from "@mui/material";
 
-const MAPBOX_TOKEN =
-
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 interface MapComponentProps {
   center: [number, number];
@@ -51,8 +50,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
         return;
       }
 
-      console.log("Initializing map with token:", MAPBOX_TOKEN);
-
       // Create the map instance with a simpler style
       const mapInstance = new mapboxgl.Map({
         container: mapContainer.current,
@@ -65,7 +62,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
 
       // Handle map load event
       mapInstance.on("load", () => {
-        console.log("Map loaded successfully");
         setMapLoaded(true);
         setLoading(false);
       });
@@ -115,27 +111,20 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
     }
   }, [center, zoom, addMarker, addPolygonPoint, drawingMode]);
 
-  // Handle markers
   useEffect(() => {
     if (!map.current || !mapLoaded) return;
 
     try {
-      // Remove markers that are no longer in the state
-      Object.keys(markersRef.current).forEach((id) => {
-        if (!markers.find((m) => m.id === id)) {
-          markersRef.current[id].remove();
-          delete markersRef.current[id];
-        }
+      Object.values(markersRef.current).forEach((marker) => {
+        marker.remove();
       });
+      markersRef.current = {};
 
-      // Add new markers
       markers.forEach((marker) => {
-        if (!markersRef.current[marker.id]) {
-          const newMarker = new mapboxgl.Marker()
-            .setLngLat(marker.lngLat)
-            .addTo(map.current!);
-          markersRef.current[marker.id] = newMarker;
-        }
+        const newMarker = new mapboxgl.Marker()
+          .setLngLat(marker.lngLat)
+          .addTo(map.current!);
+        markersRef.current[marker.id] = newMarker;
       });
     } catch (error) {
       console.error("Error handling markers:", error);
@@ -147,7 +136,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ center, zoom }) => {
     if (!map.current || !mapLoaded) return;
 
     try {
-      // Remove existing polygon layers and sources
       polygons.forEach((polygon, index) => {
         const sourceId = `polygon-source-${index}`;
         const layerId = `polygon-layer-${index}`;

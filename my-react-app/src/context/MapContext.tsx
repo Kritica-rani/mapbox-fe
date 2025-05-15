@@ -1,7 +1,6 @@
 import React from "react";
 import { createContext, useState, useContext, useEffect } from "react";
 
-// Define types for our context
 interface Marker {
   id: string;
   lngLat: [number, number];
@@ -25,7 +24,6 @@ interface MapContextType {
   completePolygon: () => void;
   clearPolygons: () => void;
   clearAll: () => void;
-  saveToLocalStorage: () => void;
   exportGeoJSON: () => void;
   importGeoJSON: (data: any) => void;
 }
@@ -43,7 +41,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentPolygonPoints, setCurrentPolygonPoints] = useState<
     [number, number][]
   >([]);
-
+  const [initialized, setInitialized] = useState(false);
   // Load data from localStorage on initial render
   useEffect(() => {
     try {
@@ -53,10 +51,24 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
         setMarkers(markers || []);
         setPolygons(polygons || []);
       }
+      // Mark as initialized AFTER loading data
+      setInitialized(true);
     } catch (error) {
       console.error("Error loading from localStorage:", error);
+      setInitialized(true); // Still mark as initialized in case of error
     }
   }, []);
+
+  // Auto-save to localStorage whenever markers or polygons change
+  useEffect(() => {
+    if (initialized) {
+      try {
+        localStorage.setItem("mapState", JSON.stringify({ markers, polygons }));
+      } catch (error) {
+        console.error("Error auto-saving to localStorage:", error);
+      }
+    }
+  }, [markers, polygons, initialized]);
 
   // Add a marker
   const addMarker = (lngLat: [number, number]) => {
@@ -65,13 +77,15 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
         id: `marker-${Date.now()}`,
         lngLat,
       };
-      setMarkers([...markers, newMarker]);
+      setMarkers((currentMarkers) => [...currentMarkers, newMarker]);
     }
   };
 
   // Remove a marker
   const removeMarker = (id: string) => {
-    setMarkers(markers.filter((marker) => marker.id !== id));
+    setMarkers((currentMarkers) =>
+      currentMarkers.filter((marker) => marker.id !== id)
+    );
   };
 
   // Clear all markers
@@ -91,7 +105,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
   // Add a point to the current polygon
   const addPolygonPoint = (lngLat: [number, number]) => {
     if (drawingMode) {
-      setCurrentPolygonPoints([...currentPolygonPoints, lngLat]);
+      setCurrentPolygonPoints((points) => [...points, lngLat]);
     }
   };
 
@@ -102,7 +116,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
         id: `polygon-${Date.now()}`,
         coordinates: [[...currentPolygonPoints, currentPolygonPoints[0]]], // Close the polygon
       };
-      setPolygons([...polygons, newPolygon]);
+      setPolygons((currentPolygons) => [...currentPolygons, newPolygon]);
       setCurrentPolygonPoints([]);
     }
   };
@@ -117,17 +131,6 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
   const clearAll = () => {
     clearMarkers();
     clearPolygons();
-  };
-
-  // Save to localStorage
-  const saveToLocalStorage = () => {
-    try {
-      localStorage.setItem("mapState", JSON.stringify({ markers, polygons }));
-      alert("Map state saved successfully!");
-    } catch (error) {
-      console.error("Error saving to localStorage:", error);
-      alert("Failed to save map state.");
-    }
   };
 
   // Export as GeoJSON
@@ -199,8 +202,8 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
           }
         });
 
-        setMarkers([...markers, ...newMarkers]);
-        setPolygons([...polygons, ...newPolygons]);
+        setMarkers((currentMarkers) => [...currentMarkers, ...newMarkers]);
+        setPolygons((currentPolygons) => [...currentPolygons, ...newPolygons]);
         alert("GeoJSON imported successfully!");
       }
     } catch (error) {
@@ -222,7 +225,6 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
     completePolygon,
     clearPolygons,
     clearAll,
-    saveToLocalStorage,
     exportGeoJSON,
     importGeoJSON,
   };

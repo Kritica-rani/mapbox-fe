@@ -20,7 +20,6 @@ import {
 } from "@mui/material";
 import {
   Delete as DeleteIcon,
-  Save as SaveIcon,
   FileUpload as FileUploadIcon,
   FileDownload as FileDownloadIcon,
   PushPin as PinIcon,
@@ -43,7 +42,6 @@ const Sidebar: React.FC = () => {
     completePolygon,
     clearPolygons,
     clearAll,
-    saveToLocalStorage,
     exportGeoJSON,
     importGeoJSON,
   } = useMapContext();
@@ -178,8 +176,8 @@ const Sidebar: React.FC = () => {
         <Tab
           label={
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-              <SaveIcon fontSize="small" />
-              <Typography>Tools</Typography>
+              <FileDownloadIcon fontSize="small" />
+              <Typography>Export/Import</Typography>
             </Box>
           }
         />
@@ -539,7 +537,7 @@ const Sidebar: React.FC = () => {
                 gap: 1,
               }}
             >
-              <SaveIcon color="primary" /> Tools & Export
+              <FileDownloadIcon color="primary" /> Export & Import
             </Typography>
 
             <Box
@@ -569,26 +567,8 @@ const Sidebar: React.FC = () => {
               </Button>
 
               <Divider sx={{ my: 1 }}>
-                <Chip label="Storage Options" size="small" />
+                <Chip label="Export/Import Options" size="small" />
               </Divider>
-
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={saveToLocalStorage}
-                startIcon={<SaveIcon />}
-                sx={{
-                  borderRadius: 2,
-                  py: 1,
-                  textTransform: "none",
-                  boxShadow: 2,
-                  "&:hover": {
-                    boxShadow: 4,
-                  },
-                }}
-              >
-                Save to Browser Storage
-              </Button>
 
               <Button
                 variant="contained"
@@ -713,6 +693,27 @@ const Sidebar: React.FC = () => {
                   </Box>
                 </Box>
               )}
+            </Box>
+
+            <Box
+              sx={{
+                mt: 3,
+                p: 2,
+                backgroundColor: alpha("#e8f5e9", 0.7),
+                borderRadius: 2,
+                border: "1px solid #c8e6c9",
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: 500, color: "success.main" }}
+              >
+                Auto-Save Active
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                All markers and polygons are automatically saved to your
+                browser's storage
+              </Typography>
             </Box>
           </Box>
         )}
